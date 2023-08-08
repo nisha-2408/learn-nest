@@ -1,31 +1,24 @@
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { ProductModule } from './products/products.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { GraphQLModule } from '@nestjs/graphql';
+import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import entities from './tables';
+import { dataSourceOptions } from "src/db/db.connection";
+import { UserModule } from './users/users.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot({isGlobal: true}),
-    TypeOrmModule.forRootAsync({
-      imports: [ConfigModule],
-      useFactory: (configService: ConfigService) => ({
-        type: 'postgres',
-        host: '0.0.0.0',
-        port: 5438,
-        username: 'postgres',
-        password: 'postgres',
-        database: 'postgres',
-        entities: entities,
-        synchronize: true,
-      }),
-      inject: [ConfigService],
-    }),
-    ProductModule
+    TypeOrmModule.forRoot(dataSourceOptions),
+    ProductModule,
+    UserModule
   ],
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule {}
+export class AppModule {
+}

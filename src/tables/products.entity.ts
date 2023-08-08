@@ -1,6 +1,7 @@
-import { Entity, PrimaryGeneratedColumn, Column } from "typeorm";
+import { Field, ObjectType, Query } from "@nestjs/graphql";
+import { Entity, PrimaryGeneratedColumn, Column, TableForeignKey } from "typeorm";
 
-@Entity()
+@Entity({name: 'products',})
 export class Products{
     @PrimaryGeneratedColumn({
         type: 'bigint',
@@ -26,4 +27,6 @@ export class Products{
         nullable: false,
     })
     price: number
+
 }
+

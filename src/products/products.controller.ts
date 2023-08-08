@@ -1,20 +1,32 @@
-import { Controller, Post, Body, Get, Param, Patch, Delete } from "@nestjs/common";
+import { Controller, Post, Body, Get, Param, Patch, Delete, UseGuards, Header, Req } from "@nestjs/common";
 import { ProductService } from "./products.service";
 import { title } from "process";
 import { ProductsDto } from "./products.dtos";
+import { AuthGaurd } from "src/gaurds/auth.gaurd";
+import { UserService } from "src/users/users.service";
+import { Request } from "express";
 
+@UseGuards(AuthGaurd)
 @Controller('products')
 export class ProductController {
-    constructor(private readonly productService: ProductService){}
+    constructor(
+        private readonly productService: ProductService,
+        private readonly userService: UserService
+        ){}
 
     @Post()
-    addProducts(@Body() allData: ProductsDto ): any {
-        const result = this.productService.insertProduct(allData)
+    addProducts(@Body() allData: ProductsDto, @Req() req: Request): any {
+        const token = req.headers.authorization.split(' ')[1]
+        const userId = this.userService.decodeToken(token)['id']
+        const result = this.productService.insertProduct(allData, parseInt(userId))
         return result
     }
 
     @Get()
-    getAllProducts(){
+    getAllProducts(@Req() req: Request){
+        const token = req.headers.authorization.split(' ')[1]
+        const userId = this.userService.decodeToken(token)['id']
+        console.log(this.userService.decodeToken(token))
         return this.productService.returnAllProducts()
     }
     @Get(':id')

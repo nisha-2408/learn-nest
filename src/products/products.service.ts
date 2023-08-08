@@ -10,16 +10,9 @@ export class ProductService {
     constructor(
       @InjectRepository(Products) private readonly productSchema: Repository<Products>
       ) {}
-    products: Product[] = [
-        {
-            id: 1,
-            name: 'Iphone 14 pro max',
-            description: 'some dummy description',
-            price: 799.90
-        }
-    ];
 
-    insertProduct(productDto: ProductsDto) {
+    insertProduct(productDto: ProductsDto, userId: number) {
+      
       const newProduct = this.productSchema.create(productDto)
       return this.productSchema.save(newProduct)
     }
