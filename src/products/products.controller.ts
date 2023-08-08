@@ -10,14 +10,12 @@ export class ProductController {
     @Post()
     addProducts(@Body() allData: ProductsDto ): any {
         const result = this.productService.insertProduct(allData)
-        console.log(allData)
         return result
     }
 
     @Get()
     getAllProducts(){
         return this.productService.returnAllProducts()
-        //return { products: products }
     }
     @Get(':id')
     getProduct(@Param('id') id: string ){
@@ -29,14 +27,12 @@ export class ProductController {
     @Patch(':id')
     updateProduct(@Param('id') id: string, @Body('title') prodTitle: string, @Body('description') prodDescription: string, @Body('price') prodPrice: number) {
         const prodId: number = parseInt(id)
-        this.productService.updateProduct(prodId, prodTitle, prodDescription, prodPrice)
-        return null
+        return this.productService.updateProduct(prodId, prodTitle, prodDescription, prodPrice)
     }
 
     @Delete(':id')
     deleteProduct(@Param('id') id: string) {
         const prodId: number = parseInt(id)
-        this.productService.deleteProduct(prodId)
-        return null
+        return this.productService.deleteProduct(prodId)
     }
 }

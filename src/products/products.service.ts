@@ -13,7 +13,7 @@ export class ProductService {
     products: Product[] = [
         {
             id: 1,
-            title: 'Iphone 14 pro max',
+            name: 'Iphone 14 pro max',
             description: 'some dummy description',
             price: 799.90
         }
@@ -24,43 +24,52 @@ export class ProductService {
       return this.productSchema.save(newProduct)
     }
 
-    async returnAllProducts(): Promise<Product[]> {
+    async returnAllProducts(): Promise<Products[]> {
       const allProducts = await this.productSchema.query("SELECT * FROM PRODUCTS")
-      console.log(allProducts)
+      //console.log(allProducts)
       return [...allProducts]
     }
 
-    returnSingleProduct(prodId: number): Product {
-        const [item, index] = this.findProduct(prodId)
-        return {...item}
+    async returnSingleProduct(prodId: number): Promise<Products> {
+      const item = await this.findById(prodId)
+        //const [item, index] = this.findProduct(prodId)
+      if(!item){
+        throw new NotFoundException('Does not exist')
+      }
+      return {...item}
     }
 
-    updateProduct(productId: number, title: string, desc: string, price: number) {
-        const [product, index] = this.findProduct(productId);
-        const updatedProduct = { ...product };
-        if (title) {
-          updatedProduct.title = title;
+    async updateProduct(productId: number, title: string, desc: string, price: number) {
+        const product = await this.findById(productId);
+        let result: any
+        if(product){
+          if(title){
+            result = this.productSchema.update({id: productId}, {name: title})
+          } else if(desc){
+            result = this.productSchema.update({id: productId}, {description: desc})
+          } else if(price) {
+            result = this.productSchema.update({id: productId}, {price: price})
+          }
+        } else {
+          throw new NotFoundException('Does not exist')
         }
-        if (desc) {
-          updatedProduct.description = desc;
-        }
-        if (price) {
-          updatedProduct.price = price;
-        }
-        this.products[index] = updatedProduct;
+        return result 
       }
     
-      deleteProduct(prodId: number) {
-          const index = this.findProduct(prodId)[1];
-          this.products.splice(index, 1);
+      async deleteProduct(prodId: number) {
+        const result = await this.productSchema.delete(prodId)
+        if(result.affected == 0){
+          throw new NotFoundException('Does not exist')
+        }
+        return result
       }
     
-      private findProduct(id: number): [Product, number] {
-        const productIndex = this.products.findIndex(prod => prod.id === id);
-        const product = this.products[productIndex];
-        if (!product) {
-          throw new NotFoundException('Could not find product.');
-        }
-        return [product, productIndex];
+      private async findById(id: number): Promise<Products> {
+        const item = await this.productSchema.findOne({
+          where: {
+            id: id
+          }
+        })
+        return item
       }
 }
