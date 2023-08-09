@@ -23,10 +23,7 @@ export class ProductController {
     }
 
     @Get()
-    getAllProducts(@Req() req: Request){
-        const token = req.headers.authorization.split(' ')[1]
-        const userId = this.userService.decodeToken(token)['id']
-        console.log(this.userService.decodeToken(token))
+    getAllProducts(){
         return this.productService.returnAllProducts()
     }
     @Get(':id')

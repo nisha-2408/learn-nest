@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException, UnauthorizedException } from "@nestjs/common";
 import { Repository } from "typeorm";
 import { InjectRepository } from "@nestjs/typeorm";
-import { Users } from "src/tables/users.entity";
+import { Users } from "../tables/users.entity";
 import { UsersDto } from "./users.dto";
 import { JwtService } from "@nestjs/jwt";
 import * as argon from 'argon2';
@@ -17,6 +17,7 @@ export class UserService {
         userData.password = await argon.hash(userData.password)
         const newUser = this.userScheme.create(userData)
         return this.userScheme.save(newUser)
+        
     }
 
     async logUser(username: string, password: string){

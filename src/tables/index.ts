@@ -3,5 +3,5 @@ import { Users } from "./users.entity";
 
 const entities = [Products, Users]
 
-export { Products }
+export { Products, Users }
 export default entities;

@@ -7,11 +7,12 @@ export class Users {
         type: 'bigint'
     })
     id: number;
-
+    
     @Column({
         name: 'username',
         type: 'varchar',
         nullable: false,
+        unique: true
     })
     username: string;
 
@@ -26,6 +27,7 @@ export class Users {
         name: 'email',
         type: 'varchar',
         nullable: false,
+        unique: true
     })
     email: string;
 }
